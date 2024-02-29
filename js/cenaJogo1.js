@@ -10,25 +10,27 @@ class cenaJogo1 extends Phaser.Scene {
         this.load.image('platform', 'assets/platform.png')
         this.load.spritesheet('dragon_walk', 'assets/dragon_walk.png', { frameWidth: 100, frameHeight: 100 });
         this.load.spritesheet('dragon_idle', 'assets/dragon_idle.png', { frameWidth: 100, frameHeight: 100 });
+        this.load.spritesheet('fireball', 'assets/fireball.png', { frameWidth: 22, frameHeight: 32 });
+        this.load.spritesheet('knight', 'assets/knight_idle.png', { frameWidth: 100, frameHeight: 100 });
     }
-
 
     create() {
         //background
         this.add.image(400, 300, 'bg_jogo1').setScale(1.32);
 
-        let platforms = this.physics.add.staticGroup();
+        this.platforms = this.physics.add.staticGroup(); // Definindo platforms como uma variável de instância
+
         //chao
-        platforms.create(200, 580, 'platform').setScale(0.22).refreshBody().setSize(800, 90, true);
-        platforms.create(600, 580, 'platform').setScale(0.22).refreshBody().setSize(800, 90, true);
+        this.platforms.create(200, 580, 'platform').setScale(0.22).refreshBody().setSize(800, 90, true);
+        this.platforms.create(600, 580, 'platform').setScale(0.22).refreshBody().setSize(800, 90, true);
 
         //plataforma direita
-        platforms.create(620, 350, 'platform').setScale(0.1).refreshBody();
-        platforms.create(720, 350, 'platform').setScale(0.1).refreshBody();
+        this.platforms.create(620, 350, 'platform').setScale(0.1).refreshBody();
+        this.platforms.create(720, 350, 'platform').setScale(0.1).refreshBody();
 
         //plataforma esquerda
-        platforms.create(80, 350, 'platform').setScale(0.1).refreshBody();
-        platforms.create(170, 350, 'platform').setScale(0.1).refreshBody();
+        this.platforms.create(80, 350, 'platform').setScale(0.1).refreshBody();
+        this.platforms.create(170, 350, 'platform').setScale(0.1).refreshBody();
 
         //configurações do player (dragon)
         this.player = this.physics.add.sprite(100, 100, 'dragon_idle').setSize(50,50).setScale(1.42);
@@ -50,11 +52,42 @@ class cenaJogo1 extends Phaser.Scene {
         });
 
         //colisoes
-        this.physics.add.collider(this.player, platforms);
+        this.physics.add.collider(this.player, this.platforms);
 
         // Controles do jogador
         this.cursors = this.input.keyboard.createCursorKeys();
+
+        // Adicione um evento para detectar quando a tecla de espaço é pressionada
+        this.input.keyboard.on('keydown-SPACE', this.shootFireball, this);
     }
+
+        shootFireball() {
+            // Crie uma bola de fogo no local do jogador
+            let fireball = this.physics.add.sprite(this.player.x, this.player.y, 'fireball').setScale(1.42);
+
+            // Configure a velocidade da bola de fogo de acordo com a direção do jogador
+            if (this.player.flipX) {
+                // Se o jogador estiver olhando para a esquerda, a bola de fogo vai para a esquerda
+                fireball.setVelocityX(300);
+                fireball.setAngle(-90); // Ajuste o ângulo da bola de fogo (vertical)
+            } else {
+                // Caso contrário, a bola de fogo vai para a direita
+                fireball.setVelocityX(-300);
+                fireball.setAngle(90); // Ajuste o ângulo da bola de fogo (vertical)
+            }
+            fireball.setGravityY(-100)
+
+            // Destrua a bola de fogo quando sair da tela para economizar recursos
+            fireball.setCollideWorldBounds(false);
+            
+
+            // Adicione colisão entre a bola de fogo e as plataformas
+            this.physics.add.collider(fireball, this.platforms, function() {
+                fireball.destroy(); // Destrua a bola de fogo quando colidir com as plataformas
+            }, null, this);
+
+            
+        }
 
     update () {
         // Verifica os controles de teclado e move o jogador
