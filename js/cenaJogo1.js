@@ -11,7 +11,7 @@ class cenaJogo1 extends Phaser.Scene {
         this.load.spritesheet('dragon_walk', 'assets/dragon_walk.png', { frameWidth: 100, frameHeight: 100 });
         this.load.spritesheet('dragon_idle', 'assets/dragon_idle.png', { frameWidth: 100, frameHeight: 100 });
         this.load.spritesheet('fireball', 'assets/fireball.png', { frameWidth: 22, frameHeight: 32 });
-        this.load.spritesheet('knight', 'assets/knight_idle.png', { frameWidth: 100, frameHeight: 100 });
+        this.load.spritesheet('knight', 'assets/knight_idle.png', { frameWidth: 150, frameHeight: 150 });
     }
 
     create() {
