@@ -19,19 +19,19 @@ class cenaJogo1 extends Phaser.Scene {
 
         let platforms = this.physics.add.staticGroup();
         //chao
-        platforms.create(200, 580, 'platform').setScale(0.22);
-        platforms.create(600, 580, 'platform').setScale(0.22);
+        platforms.create(200, 580, 'platform').setScale(0.22).refreshBody().setSize(800, 90, true);
+        platforms.create(600, 580, 'platform').setScale(0.22).refreshBody().setSize(800, 90, true);
 
         //plataforma direita
-        platforms.create(620, 350, 'platform').setScale(0.1);
-        platforms.create(720, 350, 'platform').setScale(0.1);
+        platforms.create(620, 350, 'platform').setScale(0.1).refreshBody();
+        platforms.create(720, 350, 'platform').setScale(0.1).refreshBody();
 
         //plataforma esquerda
-        platforms.create(80, 350, 'platform').setScale(0.1);
-        platforms.create(170, 350, 'platform').setScale(0.1);
+        platforms.create(80, 350, 'platform').setScale(0.1).refreshBody();
+        platforms.create(170, 350, 'platform').setScale(0.1).refreshBody();
 
         //configurações do player (dragon)
-        this.player = this.physics.add.sprite(100, 450, 'dragon_idle').setScale(1.42);
+        this.player = this.physics.add.sprite(100, 100, 'dragon_idle').setSize(50,50).setScale(1.42);
         this.player.setCollideWorldBounds(true); // Impede que o jogador saia da tela
 
         // Animações do jogador
@@ -67,8 +67,18 @@ class cenaJogo1 extends Phaser.Scene {
             this.player.anims.play('walk', true); // Ativa a animação de caminhada
             this.player.setFlipX(true); // Flipa o sprite horizontalmente
         } else {
-            this.player.setVelocityX(0); // Parado
+            this.player.setVelocityX(0); // Parado horizontalmente
             this.player.anims.play('idle', true); // Ativa a animação de idle
+        }
+
+        // Verifica se a seta para cima está pressionada para voar para cima
+        if (this.cursors.up.isDown) {
+            this.player.setVelocityY(-160); // Movimento para cima
+        } else if (this.cursors.down.isDown) {
+            this.player.setVelocityY(160); // Movimento para baixo
+        } else {
+            // Se nenhuma tecla estiver pressionada, aplica a gravidade
+            this.player.setGravityY(300); // Ajuste conforme necessário
         }
     }
 }
