@@ -1,5 +1,4 @@
-
-export default class cenaInicial extends Phaser.Scene {
+class cenaInicial extends Phaser.Scene {
     constructor() {
         super({
             key: 'cenaInicial',
@@ -9,11 +8,11 @@ export default class cenaInicial extends Phaser.Scene {
     preload() {
         this.load.image('playButton', 'assets/playbt.png');
         this.load.image('playButtonHover', 'assets/playbtHover.png');
-        this.load.image('bg', 'assets/bg.png')
+        this.load.image('bg', 'assets/bg.png');
     }
 
     create() {
-        this.add.image(400, 300, 'bg')
+        this.add.image(400, 300, 'bg').setScale(2);
 
             let playButton = this.add.image(this.game.config.width / 2 - 50, this.game.config.height / 4 * 3, 'playButton').setOrigin(0, 0).setInteractive().setVisible(true);
 
