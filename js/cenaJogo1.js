@@ -6,33 +6,29 @@ class cenaJogo1 extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('playButton', 'assets/playbt.png');
-        this.load.image('playButtonHover', 'assets/playbtHover.png');
-        this.load.image('bg', 'assets/bg.png')
+        this.load.image('bg_jogo1', 'assets/bg_jogo.jpeg')
+        this.load.image('platform', 'assets/platform.png')
     }
 
     create() {
-        this.add.image(400, 300, 'bg')
+        //background
+        this.add.image(400, 300, 'bg_jogo1').setScale(1.32)
+        //chao
+        this.add.image(200, 580, 'platform').setScale(0.22)
+        this.add.image(600, 580, 'platform').setScale(0.22)
 
-            let playButton = this.add.image(this.game.config.width / 2 - 50, this.game.config.height / 4 * 3, 'playButton').setOrigin(0, 0).setInteractive().setVisible(true);
+        //plataforma direita
+        this.add.image(620, 350, 'platform').setScale(0.1)
+        this.add.image(720, 350, 'platform').setScale(0.1)
 
-            // Quando o ponteiro passa por cima do botão, muda para a textura de hover
-            playButton.on('pointerover', () => {
-                playButton.setTexture('playButtonHover');
-            });
-        
-            // Quando o ponteiro sai de cima do botão, volta para a textura original
-            playButton.on('pointerout', () => {
-                playButton.setTexture('playButton');
-            });
-        
-            // Adiciona funcionalidade de clique ao botão
-            playButton.on('pointerdown', () => {
+         //plataforma esquerda
+        this.add.image(80, 350, 'platform').setScale(0.1)
+        this.add.image(170, 350, 'platform').setScale(0.1)
 
-                //Começa o jogo com a escolha do personagem
-                this.scene.start('cenaJogo1', this.game);
-            }, this);
+        //plataforma acima da direita 
         }
+
+        // plataforma = this.physics.add.staticImage(larguraJogo/2, alturaJogo/2, 'plataforma_tijolo');
 
     update () {
     }
