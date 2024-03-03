@@ -8,11 +8,13 @@ class cenaInicial extends Phaser.Scene {
     preload() {
         this.load.image('playButton', 'assets/playbt.png');
         this.load.image('playButtonHover', 'assets/playbtHover.png');
-        this.load.image('bg', 'assets/bg.png');
+        this.load.image('bg', 'assets/bg_principal.png');
+        this.load.image('preto', 'assets/preto.png');
     }
 
     create() {
-        this.add.image(400, 300, 'bg').setScale(2);
+        this.add.image(400, 300, 'preto').setScale(5);
+        this.add.image(400, 300, 'bg').setScale(0.4);
 
             let playButton = this.add.image(this.game.config.width / 2 - 50, this.game.config.height / 4 * 3, 'playButton').setOrigin(0, 0).setInteractive().setVisible(true);
 
@@ -32,6 +34,7 @@ class cenaInicial extends Phaser.Scene {
                 //Começa o jogo com a escolha do personagem
                 this.scene.start('cenaJogo1', this.game);
             }, this);
+
         }
 
     update () {
