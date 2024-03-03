@@ -3,6 +3,7 @@ class cenaJogo1 extends Phaser.Scene {
         super({
             key: 'cenaJogo1',
         });
+        this.score = 0
     }
 
     preload() {
@@ -18,7 +19,10 @@ class cenaJogo1 extends Phaser.Scene {
     create() {
         // Background
         this.add.image(400, 300, 'bg_jogo1').setScale(1.32);
+        //score
+        this.scoreText = this.add.text(16, 16, 'Pontos: 0', { fontSize: '32px', fill: '#000' });
 
+        
         // Plataformas
         this.platforms = this.physics.add.staticGroup();
         this.platforms.create(200, 580, 'platform').setScale(0.22).refreshBody().setSize(800, 90, true);
@@ -27,6 +31,12 @@ class cenaJogo1 extends Phaser.Scene {
         this.platforms.create(720, 350, 'platform').setScale(0.1).refreshBody();
         this.platforms.create(80, 350, 'platform').setScale(0.1).refreshBody();
         this.platforms.create(170, 350, 'platform').setScale(0.1).refreshBody();
+        this.platforms.create(170, 170, 'platform').setScale(0.1).refreshBody();
+        this.platforms.create(80, 170, 'platform').setScale(0.1).refreshBody();
+        this.platforms.create(620, 170, 'platform').setScale(0.1).refreshBody();
+        this.platforms.create(720, 170, 'platform').setScale(0.1).refreshBody();
+
+
 
         // Player (dragon)
         this.player = this.physics.add.sprite(100, 100, 'dragon_idle').setSize(50, 50).setScale(1.42);
@@ -34,9 +44,19 @@ class cenaJogo1 extends Phaser.Scene {
         this.physics.add.collider(this.player, this.platforms);
 
         // Knight (NPC)
-        this.knight = this.physics.add.sprite(600, 100, 'knight_idle').setSize(70, 70).setScale(1);
-        this.knight.setOrigin(0.5, 0.5)
-        this.knight.setOffset(20, 70); 
+        this.knightSpawnPoints = [
+            { x: 300, y: 320 },
+            { x: 700, y: 250 },
+            { x: 300, y: 540 },
+            { x: 700, y: 540 },
+            { x: 700, y: 150 },
+            
+        ];
+
+        const randomSpawnPoint = Phaser.Math.RND.pick(this.knightSpawnPoints);
+        this.knight = this.physics.add.sprite(700, 250, 'knight_idle').setSize(70, 70).setScale(1);
+        this.knight.setOrigin(0.5, 0.5);
+        this.knight.setOffset(20, 70);
         this.knight.setCollideWorldBounds(true);
         this.physics.add.collider(this.knight, this.platforms);
 
@@ -103,8 +123,31 @@ class cenaJogo1 extends Phaser.Scene {
         // Adicione colisão entre a bola de fogo e as plataformas
         this.physics.add.collider(fireball, this.platforms, function() {
             fireball.destroy(); // Destrua a bola de fogo quando colidir com as plataformas
-        }, null, this);
+        });
+
+        // Adicione colisão entre a bola de fogo e o Knight
+        this.physics.add.overlap(fireball, this.knight, () => {
+            // Destrua a bola de fogo quando atingir o Knight
+            fireball.destroy(); 
+            // Destrua o Knight
+            this.knight.destroy();
+            //aumentar o score
+            this.score++;
+            //atualiza o contador
+            this.scoreText.setText('Pontos: ' + this.score);
+            // Crie um novo Knight em um dos quatro pontos
+            const randomSpawnPoint = Phaser.Math.RND.pick(this.knightSpawnPoints);
+            this.knight = this.physics.add.sprite(randomSpawnPoint.x, randomSpawnPoint.y, 'knight_idle').setSize(70, 70).setScale(1);
+            this.knight.setOrigin(0.5, 0.5);
+            this.knight.setOffset(20, 70);
+            this.knight.setCollideWorldBounds(true);
+            this.physics.add.collider(this.knight, this.platforms);
+        });
+
+
     }
+
+
 
     update () {
         // Movimento do jogador
@@ -140,25 +183,26 @@ class cenaJogo1 extends Phaser.Scene {
         }
     }
 
-        knightMovement() {
-            // Verifica a direção do movimento do Knight e atualiza sua posição
-            if (this.knightDistance >= 10000 && this.knightDirection === 1) {
-                // Se o Knight andou 100 pixels para a direita, muda a direção para esquerda
-                this.knightDistance = 0;
-                this.knightDirection = -1;
-                this.knight.setFlipX(true); // Inverte o sprite do Knight
-            } else if (this.knightDistance <= -10000 && this.knightDirection === -1) {
-                // Se o Knight andou 100 pixels para a esquerda, muda a direção para direita
-                this.knightDistance = 0;
-                this.knightDirection = 1;
-                this.knight.setFlipX(false); // Reverte o sprite do Knight
-            }
-
-            // Move o Knight na direção e velocidade definidas
-            this.knight.setVelocityX(50 * this.knightDirection); // 50 pixels por quadro
-            this.knight.anims.play('knight_walk', true); // Ativa a animação de caminhada do Knight
-
-            // Atualiza a distância percorrida pelo Knight
-            this.knightDistance += 50 * this.knightDirection;
+    knightMovement() {
+        // Verifica a direção do movimento do Knight e atualiza sua posição
+        if (this.knightDistance >= 10000 && this.knightDirection === 1) {
+            // Se o Knight andou 100 pixels para a direita, muda a direção para esquerda
+            this.knightDistance = 0;
+            this.knightDirection = -1;
+            this.knight.setFlipX(true); // Inverte o sprite do Knight
+        } else if (this.knightDistance <= -10000 && this.knightDirection === -1) {
+            // Se o Knight andou 100 pixels para a esquerda, muda a direção para direita
+            this.knightDistance = 0;
+            this.knightDirection = 1;
+            this.knight.setFlipX(false); // Reverte o sprite do Knight
         }
+
+        // Move o Knight na direção e velocidade definidas
+        this.knight.setVelocityX(50 * this.knightDirection); // 50 pixels por quadro
+        this.knight.anims.play('knight_walk', true); // Ativa a animação de caminhada do Knight
+
+        // Atualiza a distância percorrida pelo Knight
+        this.knightDistance += 50 * this.knightDirection;
+    }
 }
+
